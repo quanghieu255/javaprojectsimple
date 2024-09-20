@@ -225,7 +225,6 @@ public class JavaApplicationSimple {
         panel.add(tname2);
         panel.add(login);
         panel.add(scroll3);
-        
         frame.add(panel);
         frame.setVisible(true);
         login.addActionListener(new ActionListener() {
