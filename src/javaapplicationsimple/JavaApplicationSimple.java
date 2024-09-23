@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -157,6 +158,45 @@ public class JavaApplicationSimple {
             }                  
         }
         return result;
+    }  
+    public static String removeUn(String data){
+        String[] arrOfStr = data.split("\\n");
+        String result = "";
+        int i = 0;
+        String tmpSelect = "";
+        for(i = 0; i< arrOfStr.length; i++){
+//            if(arrOfStr[i].trim().startsWith("if") && arrOfStr[i+1].trim().startsWith("else") && arrOfStr[i+2].trim().startsWith("endif")){
+//                i = i+ 2;
+//            }
+//            else if(arrOfStr[i].trim().startsWith("if") && arrOfStr[i+1].trim().startsWith("endif")){
+//                i = i+ 1;
+//            }else 
+            if (arrOfStr[i].trim().startsWith("selectcase") == true){
+                String[] arrOfStr2 = arrOfStr[i].trim().split(" ");
+                tmpSelect = arrOfStr2[arrOfStr2.length -1];
+                //System.out.println("arrOfStr2 "+ tmpSelect);
+            }
+            if(arrOfStr[i].trim().startsWith("for") || arrOfStr[i].trim().startsWith("next") || arrOfStr[i].trim().startsWith("selectcase") 
+                    || arrOfStr[i].trim().startsWith("endselect") ){
+                //i = i+ 1;
+                continue;
+            }
+            else{
+                if (arrOfStr[i].trim().startsWith("caseelse") == true){
+                    arrOfStr[i] = arrOfStr[i].replace(":", " then");  
+                    arrOfStr[i] = arrOfStr[i].replace("caseelse", "else");                
+                }
+                else if (arrOfStr[i].trim().startsWith("case") == true){
+                    arrOfStr[i] = arrOfStr[i].replace(":", " then");
+                    arrOfStr[i] = arrOfStr[i].replace("case", "if "+ tmpSelect+" is ");
+                    
+                }
+                result =  result + "\n"+ StringUtils.stripEnd(arrOfStr[i], null);
+            }
+            
+            
+        }
+        return result;
     }    
     public static void main(String[] args) {
         JFrame frame=new JFrame();
@@ -208,7 +248,6 @@ public class JavaApplicationSimple {
         JButton login=new JButton();
         login.setPreferredSize(new Dimension(90,30));
         login.setText("Generate");
-    
         JTextPane tname3=new JTextPane();
         //tname.setColumns(100);
         tname3.setPreferredSize(new Dimension(1200,400));
@@ -233,15 +272,21 @@ public class JavaApplicationSimple {
               String[] arrOfStr = tname.getText().split("\\n");
               int pos = -1;
               String tmpStrBef, tmpStrAf = "";
-              pos = getPos(arrOfStr, tname2.getText()); 
-              //tmpStr = "TEST "+pos;
-              tmpStrBef = getStrBef(arrOfStr, pos, tname2.getText());
-              tmpStrAf = getStrAf(arrOfStr, pos, tname2.getText());
-        
-//              String result = removeUn(tmpStrBef+"\n"+tmpStrAf);
-//              result = removeUn(result);
-//              result = removeUn(result);
-              tname3.setText(tmpStrBef+"\n"+tmpStrAf);
+              if (tname2.getText().trim().equals("") == false){
+                pos = getPos(arrOfStr, tname2.getText()); 
+                //tmpStr = "TEST "+pos;
+                tmpStrBef = getStrBef(arrOfStr, pos, tname2.getText());
+                tmpStrAf = getStrAf(arrOfStr, pos, tname2.getText());
+
+                //String result = removeUn(tmpStrBef+"\n"+tmpStrAf);
+  //              result = removeUn(result);
+  //              result = removeUn(result);
+                tname3.setText(tmpStrBef+"\n"+tmpStrAf);             
+              }else{
+                  tname3.setText(removeUn(tname.getText()));
+              }
+
+              
            }
         });        
     }
